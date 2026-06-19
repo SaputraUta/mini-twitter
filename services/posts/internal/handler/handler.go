@@ -5,13 +5,15 @@ import (
 	"net/http"
 
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/model"
+	"github.com/SaputraUta/mini-twitter/services/posts/internal/service"
 )
 
 type Handler struct {
+	svc *service.Service
 }
 
-func New() *Handler {
-	return &Handler{}
+func New(svc *service.Service) *Handler {
+	return &Handler{svc: svc}
 }
 
 func (h *Handler) Health(w http.ResponseWriter, r *http.Request) {
@@ -31,8 +33,12 @@ func (h *Handler) CreateTweet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	t.ID = 1
+	created, err := h.svc.CreateTweet(t)
+	if err != nil {
+		http.Error(w, "could not save tweet", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(t)
+	json.NewEncoder(w).Encode(created)
 }

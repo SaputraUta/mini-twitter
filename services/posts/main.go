@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/handler"
+	"github.com/SaputraUta/mini-twitter/services/posts/internal/service"
+	"github.com/SaputraUta/mini-twitter/services/posts/internal/store"
 )
 
 func main() {
@@ -14,7 +16,9 @@ func main() {
 		port = "8081"
 	}
 
-	h := handler.New()
+	st := store.NewMemoryStore()
+	svc := service.New(st)
+	h := handler.New(svc)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", h.Health)
