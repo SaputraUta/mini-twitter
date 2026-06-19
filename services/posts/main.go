@@ -5,13 +5,9 @@ import (
 	"log"
 	"net/http"
 	"os"
-)
 
-type Tweet struct {
-	ID     int    `json:"id"`
-	UserID int    `json:"user_id"`
-	Text   string `json:"text"`
-}
+	"github.com/SaputraUta/mini-twitter/services/posts/internal/model"
+)
 
 func main() {
 	port := os.Getenv("POSTS_SERVICE_PORT")
@@ -27,7 +23,7 @@ func main() {
 	})
 
 	mux.HandleFunc("POST /tweet", func(w http.ResponseWriter, r *http.Request) {
-		var t Tweet
+		var t model.Tweet
 		if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
 			http.Error(w, "invalid JSON", http.StatusBadRequest)
 			return
