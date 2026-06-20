@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/handler"
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/service"
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/store"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func main() {
@@ -16,7 +18,14 @@ func main() {
 		port = "8081"
 	}
 
-	st := store.NewMemoryStore()
+	dbURL := os.Getenv("DATABASE_URL")
+	pool, err := pgxpool.New(context.Background(), dbURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
+
+	st := store.NewPostresStore(pool)
 	svc := service.New(st)
 	h := handler.New(svc)
 

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/model"
@@ -35,6 +36,7 @@ func (h *Handler) CreateTweet(w http.ResponseWriter, r *http.Request) {
 
 	created, err := h.svc.CreateTweet(t)
 	if err != nil {
+		log.Printf("create tweet failed: %v", err)
 		http.Error(w, "could not save tweet", http.StatusInternalServerError)
 		return
 	}
