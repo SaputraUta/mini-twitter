@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/SaputraUta/mini-twitter/services/posts/internal/events"
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/handler"
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/service"
 	"github.com/SaputraUta/mini-twitter/services/posts/internal/store"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/nats-io/nats.go"
 )
 
 func main() {
@@ -24,9 +26,20 @@ func main() {
 		log.Fatal(err)
 	}
 	defer pool.Close()
-
 	st := store.NewPostresStore(pool)
-	svc := service.New(st)
+
+	nc, err := nats.Connect(os.Getenv("NATS_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nc.Close()
+
+	pub, err := events.NewNatsPublisher(nc)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	svc := service.New(st, pub)
 	h := handler.New(svc)
 
 	mux := http.NewServeMux()
