@@ -5,9 +5,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/SaputraUta/mini-twitter/services/fanout/consumer"
-	"github.com/SaputraUta/mini-twitter/services/fanout/service"
-	"github.com/SaputraUta/mini-twitter/services/fanout/store"
+	"github.com/SaputraUta/mini-twitter/services/fanout/internal/consumer"
+	"github.com/SaputraUta/mini-twitter/services/fanout/internal/service"
+	"github.com/SaputraUta/mini-twitter/services/fanout/internal/store"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/nats-io/nats.go"
 	"github.com/redis/go-redis/v9"

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/SaputraUta/mini-twitter/services/fanout/model"
-	"github.com/SaputraUta/mini-twitter/services/fanout/service"
+	"github.com/SaputraUta/mini-twitter/services/fanout/internal/model"
+	"github.com/SaputraUta/mini-twitter/services/fanout/internal/service"
 	"github.com/nats-io/nats.go"
 )
 

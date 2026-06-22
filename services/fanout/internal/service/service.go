@@ -1,6 +1,6 @@
 package service
 
-import "github.com/SaputraUta/mini-twitter/services/fanout/model"
+import "github.com/SaputraUta/mini-twitter/services/fanout/internal/model"
 
 type FollowerStore interface {
 	Followers(authorID int64) ([]int64, error)
