@@ -29,7 +29,7 @@ func (h *Handler) Timeline(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ids, err := h.svc.Timeline(userID)
+	tweets, err := h.svc.Timeline(userID)
 	if err != nil {
 		log.Printf("get timeline %d: %v", userID, err)
 		http.Error(w, "could not get timeline", http.StatusInternalServerError)
@@ -37,5 +37,5 @@ func (h *Handler) Timeline(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]any{"user_id": userID, "tweets": ids})
+	json.NewEncoder(w).Encode(map[string]any{"user_id": userID, "tweets": tweets})
 }

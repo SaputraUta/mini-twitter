@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -8,6 +9,7 @@ import (
 	"github.com/SaputraUta/mini-twitter/services/timeline/internal/handler"
 	"github.com/SaputraUta/mini-twitter/services/timeline/internal/service"
 	"github.com/SaputraUta/mini-twitter/services/timeline/internal/store"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -17,6 +19,12 @@ func main() {
 		port = "8002"
 	}
 
+	pool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
+
 	ropts, err := redis.ParseURL(os.Getenv("REDIS_URL"))
 	if err != nil {
 		log.Fatal(err)
@@ -24,8 +32,10 @@ func main() {
 	rdb := redis.NewClient(ropts)
 	defer rdb.Close()
 
-	st := store.NewRedisTimeline(rdb)
-	svc := service.New(st)
+	timelineStore := store.NewRedisTimeline(rdb)
+	tweetStore := store.NewPostgresTweets(pool)
+
+	svc := service.New(timelineStore, tweetStore)
 	h := handler.New(svc)
 
 	mux := http.NewServeMux()
