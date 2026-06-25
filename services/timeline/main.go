@@ -41,6 +41,7 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", h.Health)
 	mux.HandleFunc("GET /timeline/{user}", h.Timeline)
+	mux.HandleFunc("GET /timeline-db/{user}", h.TimelineDB)
 	addr := ":" + port
 	log.Printf("timeline-service listening on %s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {

@@ -8,6 +8,7 @@ type TimelineStore interface {
 
 type TweetStore interface {
 	TweetsByIDs(ids []int64) ([]model.Tweet, error)
+	TimelineFromFollows(userID int64, limit int64) ([]model.Tweet, error)
 }
 
 type Service struct {
@@ -45,4 +46,8 @@ func (s *Service) Timeline(userID int64) ([]model.Tweet, error) {
 		}
 	}
 	return ordered, nil
+}
+
+func (s *Service) TimelineFromDB(userID int64) ([]model.Tweet, error) {
+	return s.tweets.TimelineFromFollows(userID, 20)
 }
