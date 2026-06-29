@@ -4,6 +4,7 @@ import "github.com/SaputraUta/mini-twitter/services/timeline/internal/model"
 
 type TimelineStore interface {
 	Timeline(userID, limit int64) ([]int64, error)
+	TweetsByIDs(ids []int64) ([]model.Tweet, error)
 }
 
 type TweetStore interface {
@@ -29,23 +30,23 @@ func (s *Service) Timeline(userID int64) ([]model.Tweet, error) {
 		return []model.Tweet{}, nil
 	}
 
-	tweets, err := s.tweets.TweetsByIDs(ids)
+	tweets, err := s.timelines.TweetsByIDs(ids)
 	if err != nil {
 		return nil, err
 	}
 
-	byID := make(map[int64]model.Tweet, len(tweets))
-	for _, t := range tweets {
-		byID[t.ID] = t
-	}
+	// byID := make(map[int64]model.Tweet, len(tweets))
+	// for _, t := range tweets {
+	// 	byID[t.ID] = t
+	// }
 
-	ordered := make([]model.Tweet, 0, len(ids))
-	for _, id := range ids {
-		if t, ok := byID[id]; ok {
-			ordered = append(ordered, t)
-		}
-	}
-	return ordered, nil
+	// ordered := make([]model.Tweet, 0, len(ids))
+	// for _, id := range ids {
+	// 	if t, ok := byID[id]; ok {
+	// 		ordered = append(ordered, t)
+	// 	}
+	// }
+	return tweets, nil
 }
 
 func (s *Service) TimelineFromDB(userID int64) ([]model.Tweet, error) {
